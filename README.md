@@ -32,6 +32,7 @@ Responsive Visuals: Employs advanced HTML5 styling with custom CSS grids, animat
 Ensure you have a C++ compiler installed (like MinGW) and the Raylib development library configured[cite: 6].
 
 * **Compile the source files:**
+```
 ```bash
 g++ main.cpp board.cpp game.cpp player.cpp -lraylib -lopengl32 -lgdi32 -lwinmm -o TicTacToe
 ```
