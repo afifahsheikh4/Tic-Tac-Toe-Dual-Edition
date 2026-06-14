@@ -26,17 +26,17 @@ Dynamic Grid Sizing: Ported core validation concepts into a JavaScript engine ca
 
 Responsive Visuals: Employs advanced HTML5 styling with custom CSS grids, animations, and backdrop-filter glassmorphism overlays for the game UI.
 
-🚀 How to Run the Code
-C++ Graphical Version
-Ensure you have a C++ compiler installed (like MinGW) and the Raylib development library configured.
+## 🚀 How to Run the Code
 
-Compile the source files:
+### 💻 C++ Graphical Version
+Ensure you have a C++ compiler installed (like MinGW) and the Raylib development library configured[cite: 6].
 
-Bash
+* **Compile the source files:**
+```bash
 g++ main.cpp board.cpp game.cpp player.cpp -lraylib -lopengl32 -lgdi32 -lwinmm -o TicTacToe
+```
 Run the executable:
-
-Bash
+```bash
 ./TicTacToe
-Web Deluxe Version
-Simply open the index.html file inside the web-version/ folder with any modern web browser to play instantly!    
+```
+🌐 Web Deluxe VersionSimply open the index.html file inside the web-version/ folder with any modern web browser to play instantly!  
