@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe Deluxe</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#0f172a,#1e293b,#111827);
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.card{
+    width:90%;
+    max-width:900px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:25px;
+    text-align:center;
+}
+input,select,button{
+    padding:10px;
+    margin:8px;
+    border-radius:10px;
+    border:none;
+}
+button{
+    cursor:pointer;
+    font-weight:bold;
+}
+.board{
+    display:grid;
+    gap:5px;
+    justify-content:center;
+    margin-top:20px;
+}
+.cell{
+    width:80px;
+    height:80px;
+    background:#1f2937;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:32px;
+    font-weight:bold;
+    cursor:pointer;
+    border-radius:10px;
+}
+.hidden{display:none;}
+#message{font-size:22px;margin:10px;}
+.trophy{font-size:90px;}
+</style>
+</head>
+<body>
+<div class="card">
+
+<div id="setup">
+<h1>🎮 Tic Tac Toe Deluxe</h1>
+
+<input id="p1" placeholder="Player 1 Name"><br>
+<select id="s1">
+<option>X</option>
+<option>O</option>
+</select><br>
+
+<input id="p2" placeholder="Player 2 Name"><br>
+<select id="s2">
+<option>O</option>
+<option>X</option>
+</select><br>
+
+<select id="size">
+<option value="3">3 x 3</option>
+<option value="4">4 x 4</option>
+<option value="5">5 x 5</option>
+</select><br>
+
+<div id="warning"></div>
+
+<button onclick="startGame()">Start Game</button>
+</div>
+
+<div id="game" class="hidden">
+<h2 id="turn"></h2>
+<div id="board" class="board"></div>
+</div>
+
+<div id="winnerScreen" class="hidden">
+<div class="trophy">🏆</div>
+<h1 id="winnerText"></h1>
+<p>Congratulations Champion!</p>
+<button onclick="playAgain()">Y - Play Again</button>
+<button onclick="endGame()">N - Exit</button>
+</div>
+
+<div id="goodbye" class="hidden">
+<h1>Thanks For Playing 🎉</h1>
+</div>
+
+</div>
+
+<script>
+let board=[];
+let boardSize=3;
+let current=0;
+let players=[];
+let gameOver=false;
+
+function startGame(){
+ const p1=document.getElementById("p1").value.trim();
+ const p2=document.getElementById("p2").value.trim();
+ const s1=document.getElementById("s1").value;
+ const s2=document.getElementById("s2").value;
+ const size=parseInt(document.getElementById("size").value);
+
+ if(!p1 || !p2){
+   document.getElementById("warning").innerHTML="Enter both player names.";
+   return;
+ }
+
+ if(s1===s2){
+   document.getElementById("warning").innerHTML="⚠ Symbol already in use. Choose another.";
+   return;
+ }
+
+ players=[
+  {name:p1,symbol:s1},
+  {name:p2,symbol:s2}
+ ];
+
+ boardSize=size;
+ board=new Array(size*size).fill("");
+ current=0;
+ gameOver=false;
+
+ document.getElementById("setup").classList.add("hidden");
+ document.getElementById("winnerScreen").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+
+ createBoard();
+ updateTurn();
+}
+
+function createBoard(){
+ const b=document.getElementById("board");
+ b.innerHTML="";
+ b.style.gridTemplateColumns=`repeat(${boardSize},80px)`;
+
+ for(let i=0;i<board.length;i++){
+   const cell=document.createElement("div");
+   cell.className="cell";
+   cell.dataset.index=i;
+   cell.onclick=()=>move(i);
+   b.appendChild(cell);
+ }
+}
+
+function updateTurn(){
+ document.getElementById("turn").innerHTML=players[current].name+"'s Turn ("+players[current].symbol+")";
+}
+
+function move(i){
+ if(gameOver || board[i]!="") return;
+
+ board[i]=players[current].symbol;
+ document.querySelectorAll(".cell")[i].innerHTML=players[current].symbol;
+
+ if(checkWin(players[current].symbol)){
+    gameOver=true;
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("winnerScreen").classList.remove("hidden");
+    document.getElementById("winnerText").innerHTML=players[current].name+" Wins!";
+    return;
+ }
+
+ if(board.every(x=>x!="")){
+    gameOver=true;
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("winnerScreen").classList.remove("hidden");
+    document.getElementById("winnerText").innerHTML="It's a Draw!";
+    return;
+ }
+
+ current=1-current;
+ updateTurn();
+}
+
+function checkWin(sym){
+ const n=boardSize;
+
+ for(let r=0;r<n;r++){
+   let ok=true;
+   for(let c=0;c<n;c++){
+      if(board[r*n+c]!==sym) ok=false;
+   }
+   if(ok) return true;
+ }
+
+ for(let c=0;c<n;c++){
+   let ok=true;
+   for(let r=0;r<n;r++){
+      if(board[r*n+c]!==sym) ok=false;
+   }
+   if(ok) return true;
+ }
+
+ let d1=true;
+ for(let i=0;i<n;i++){
+   if(board[i*n+i]!==sym) d1=false;
+ }
+ if(d1) return true;
+
+ let d2=true;
+ for(let i=0;i<n;i++){
+   if(board[i*n+(n-1-i)]!==sym) d2=false;
+ }
+ if(d2) return true;
+
+ return false;
+}
+
+function playAgain(){
+ document.getElementById("winnerScreen").classList.add("hidden");
+ document.getElementById("setup").classList.remove("hidden");
+}
+
+function endGame(){
+ document.getElementById("winnerScreen").classList.add("hidden");
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("setup").classList.add("hidden");
+ document.getElementById("goodbye").classList.remove("hidden");
+}
+</script>
+</body>
+</html>
